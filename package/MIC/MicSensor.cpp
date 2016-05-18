@@ -59,7 +59,7 @@ float MicSensor::read()
 	{
 		_lastreadtime = 0;
 	}
-	if (firstreading || ((currenttime - _lastreadtime) >= 25)) 
+	if (firstreading || ((currenttime - _lastreadtime) >= 25))
 		//Mic readings will be collected in IntervalTimer function from an interrupt context, which is very fast - currently 25s.
 	{
 		// collect data for 50 mS

@@ -60,7 +60,8 @@ void SysteTimerCB()
   // e.g: fast blink, slow blink, breath, etc
   // ToDo:
 
-  // ToDo: MIC input (tone detection)
+  //MIC input (tone detection)
+	theSys.CollectMicData(); 
 
   // High speed non-block process
   theSys.FastProcess();

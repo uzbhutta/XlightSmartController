@@ -59,6 +59,7 @@ public:
   float m_humidity;
   uint16_t m_brightness;
   bool m_motion; 
+  float m_loudnessVoltage; 
 
 public:
   CloudObjClass();
@@ -71,6 +72,7 @@ public:
   BOOL UpdateHumidity(float value);
   BOOL UpdateBrightness(uint16_t value);
   BOOL UpdateMotion(bool value);
+  BOOL UpdateLoudnessVoltage(float value); 
   void UpdateJSONData();
 
 protected:

@@ -33,6 +33,7 @@
 #include "LedLevelBar.h"
 #include "LightSensor.h"
 #include "MotionSensor.h"
+#include "MicSensor.h"
 #include "TimeAlarms.h"
 
 //------------------------------------------------------------------
@@ -43,10 +44,9 @@ SmartControllerClass theSys = SmartControllerClass();
 
 DHT senDHT(PIN_SEN_DHT, SEN_TYPE_DHT);
 LightSensor senLight(PIN_SEN_LIGHT);
-
 LedLevelBar indicatorBrightness(ledLBarProgress, 3);
-
 MotionSensor senMotion(PIN_SEN_PIR);
+MicSensor senMic(PIN_SEN_MIC);
 
 
 //------------------------------------------------------------------
@@ -172,7 +172,6 @@ void SmartControllerClass::InitSensors()
     LOGD(LOGTAG_MSG, "Light sensor works.");
   }
 
-
   // Brightness indicator
   indicatorBrightness.configPin(0, PIN_LED_LEVEL_B0);
   indicatorBrightness.configPin(1, PIN_LED_LEVEL_B1);
@@ -185,9 +184,11 @@ void SmartControllerClass::InitSensors()
     LOGD(LOGTAG_MSG, "Motion sensor works.");
   }
 
-
-  // ToDo:
-  //...
+  //MIC
+  if (theConfig.IsSensorEnabled(sensorMIC)) {
+	  senMic.begin();
+	  LOGD(LOGTAG_MSG, "Mic sensor works.");
+  }
 }
 
 void SmartControllerClass::InitCloudObj()
@@ -363,6 +364,11 @@ void SmartControllerClass::CollectData(UC tick)
 
   // Proximity detection
   // ToDo: Wi-Fi, BLE, etc.
+}
+
+void SmartControllerClass::CollectMicData() {
+	//data collection of mic will be independent of which mode the SmartController is in
+	UpdateLoudnessVoltage(senMic.getLoudnessVoltage); 
 }
 
 //------------------------------------------------------------------

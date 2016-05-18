@@ -114,6 +114,19 @@ BOOL CloudObjClass::UpdateMotion(bool value)
   return false;
 }
 
+BOOL CloudObjClass::UpdateLoudnessVoltage(float value)
+{
+	if (m_loudnessVoltage != value) {
+		m_loudnessVoltage = value;
+		if (m_jpData->success())
+		{
+			(*m_jpData)["MIC"] = value;
+		}
+		return true;
+	}
+	return false;
+}
+
 // Compose JSON Data String
 void CloudObjClass::UpdateJSONData()
 {

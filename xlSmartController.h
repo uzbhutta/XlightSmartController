@@ -43,6 +43,7 @@ public:
   BOOL IsWANGood();
 
   void CollectData(UC tick);
+  void CollectMicData(); 
 
   // Device Control Functions
   int DevSoftSwitch(BOOL sw, UC dev = 0);
