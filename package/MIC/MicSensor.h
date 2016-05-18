@@ -22,12 +22,12 @@ private:
 
 	bool pirState = 0;
 
-	uint16_t read();
+	float read();
 
 public:
 	MicSensor(uint8_t pin, uint8_t type = 0);
 	void begin();
-	uint16_t getLoudnessVoltage();
+	float getLoudnessVoltage();
 };
 
 #endif /* MicSensor_h */

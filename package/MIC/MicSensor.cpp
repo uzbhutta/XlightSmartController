@@ -18,7 +18,7 @@
 * Version 1.0 - Created by Umar Bhutta <umar.bh@datatellit.com>
 *
 * DESCRIPTION
-* 1. support PIR MIC sensor (3 pin)
+* 1. support MIC sensor (3 pin)
 * 2. MicSensor::read() functionality has been emulated from Adafruit's Mic Amplifier
 *    example. Audio signal from the amp is a varying voltage. Multiple measurements
 *    are taken to find the min and max (peak-to-peak) amplitude of the signal.
