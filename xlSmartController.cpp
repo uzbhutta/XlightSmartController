@@ -368,7 +368,8 @@ void SmartControllerClass::CollectData(UC tick)
 
 void SmartControllerClass::CollectMicData() {
 	//data collection of mic will be independent of which mode the SmartController is in
-	UpdateLoudnessVoltage(senMic.getLoudnessVoltage());
+    UpdateLoudnessVoltage(senMic.getLoudnessVoltage());
+    UpdateJSONData();
 }
 
 //------------------------------------------------------------------
