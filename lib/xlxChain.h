@@ -20,7 +20,6 @@
  * DESCRIPTION
  *
  * ToDo:
- * 1.
 **/
 
 #include "xliCommon.h"
@@ -39,11 +38,16 @@ private:
 public:
 	ChainClass(int max);
 	virtual ListNode<T>* search(uint8_t uid);
+  virtual bool update(uint8_t uid, T);
+
+  //overload set function to accept ptr to node, and data T
+  virtual bool set(ListNode<T>* ptr, T);
 
 	//overload all "add" functions to first check if linkedlist length is greater than PRE_FLASH_MAX_TABLE_SIZE
   virtual bool add(int index, T);
   virtual bool add(T);
   virtual bool unshift(T);
+
 };
 
 //------------------------------------------------------------------
@@ -70,7 +74,33 @@ ListNode<T>* ChainClass<T>::search(uint8_t uid)
 }
 
 template<typename T>
-bool ChainClass<T>::add(int index, T _t) {
+bool ChainClass<T>::update(uint8_t uid, T _t)
+{
+  if (search(uid) == NULL) {
+    return false;
+  }
+
+  if (uid != _t.uid) {
+    return false;
+  }
+
+  set(search(uid), _t);
+  return true;
+}
+
+template<typename T>
+bool ChainClass<T>::set(ListNode<T>* ptr, T _t)
+{
+	if (ptr == NULL) {
+    return false;
+  }
+	ptr->data = _t;
+	return true;
+}
+
+template<typename T>
+bool ChainClass<T>::add(int index, T _t)
+{
 	if (LinkedList<T>::size() < max_chain_length)
 	{
 		return LinkedList<T>::add(index, _t);
@@ -82,7 +112,8 @@ bool ChainClass<T>::add(int index, T _t) {
 }
 
 template<typename T>
-bool ChainClass<T>::add(T _t) {
+bool ChainClass<T>::add(T _t)
+{
 	if (LinkedList<T>::size() < max_chain_length)
 	{
 		return LinkedList<T>::add(_t);
@@ -94,7 +125,8 @@ bool ChainClass<T>::add(T _t) {
 }
 
 template<typename T>
-bool ChainClass<T>::unshift(T _t){
+bool ChainClass<T>::unshift(T _t)
+{
   if (LinkedList<T>::size() < max_chain_length)
 	{
 		return LinkedList<T>::add(_t);
