@@ -106,4 +106,6 @@ typedef enum
   devtypDummy
 } devicetype_t;
 
+enum RING {RING_1, RING_2, RING_3};
+
 #endif /* xliCommon_h */

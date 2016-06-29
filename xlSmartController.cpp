@@ -395,7 +395,7 @@ void SmartControllerClass::CollectData(UC tick)
 	}
 
 	// ToDo: Proximity detection
-	// from all channels including Wi-Fi, BLE, etc. for MAC addresses and distance to device 
+	// from all channels including Wi-Fi, BLE, etc. for MAC addresses and distance to device
 }
 
 //------------------------------------------------------------------
@@ -405,18 +405,17 @@ void SmartControllerClass::CollectData(UC tick)
 /// Input parameters:
 ///   sw: true = on; false = off
 ///   dev: device id or 0 (all devices under this controller)
-int SmartControllerClass::DevSoftSwitch(BOOL sw, UC dev)
+int SmartControllerClass::DevSoftSwitch(UC state, RING ring, UC dev)
 {
 	// ToDo:
 	//SetStatus();
-
+	//turn on/off the ring specified at given device id
 	return 0;
 }
 
-int SmartControllerClass::DevChangeColor()
+int SmartControllerClass::DevChangeColor(Hue_t hue, RING ring, UC dev)
 {
-	// ToDo:
-
+	// ToDo: change color/hues of ring passed in, only if ring is on
 	return 0;
 }
 
@@ -457,20 +456,75 @@ int SmartControllerClass::CldSetTimeZone(String tzStr)
 	return 0;
 }
 
-int SmartControllerClass::CldPowerSwitch(String swStr)
-{	
+int SmartControllerClass::CldPowerSwitch(String jsonData)
+{
 	//ToDo: this sends data from cloud to appropriate function to change lamp color/on-off
 	//ToDo: implement function to receive JSON, parse JSON, populate DevStatus_t row
 
-	BOOL blnOn;
+	bool isValidEntry = 1;
+	StaticJsonBuffer<COMMAND_JSON_SIZE> jsonBuffer;
+  JsonObject& data = jsonBuffer.parseObject(const_cast<char*>(jsonData.c_str()));
 
-	swStr.toLowerCase();
-	blnOn = (swStr == "0" || swStr == "off");
+  if (!data.success())
+  {
+    LOGE(LOGTAG_MSG, "Error parsing input: %s", jsonData.c_str());
+		isValidEntry = 0;
+  }
 
-	// Turn the switch on or off
-	DevSoftSwitch(blnOn);
+	if (data["op_flag"] != POST)
+	{
+		LOGE(LOGTAG_MSG, "DEVICE ID:%s Invalid HTTP command: %d", data["id"], op_flag);
+		isValidEntry = 0;
+	}
 
-	return 0;
+	if (data["flash_flag"] != UNSAVED)
+	{
+		LOGE(LOGTAG_MSG, "DEVICE ID:%s Invalid FLASH_FLAG", data["id"]);
+		isValidEntry = 0;
+	}
+
+	if (data["run_flag"] != UNEXECUTED)
+	{
+		LOGE(LOGTAG_MSG, "DEVICE ID:%s Invalid RUN_FLAG", data["id"]);
+		isValidEntry = 0;
+	}
+
+	if (isValidEntry)
+	{
+		DevStatus_t row;
+		row.op_flag = data["row"];
+		row.flash_flag = data["flash_flag"];
+		row.run_flag = data["run_flag"];
+		row.uid = data["uid"];
+		row.type = data["type"];
+		Array2Hue(data["ring1"], row.ring1);
+		Array2Hue(data["ring2"], row.ring2);
+		Array2Hue(data["ring3"], row.ring3);
+
+		DevSoftSwitch(row.ring1.state, RING_1, row.id);
+		DevSoftSwitch(row.ring2.state, RING_2, row.id);
+		DevSoftSwitch(row.ring3.state, RING_3, row.id);
+
+		if (row.ring1.state != 0)
+		{
+			DevChangeColor(row.ring1, RING_1, row.id);
+		}
+		if (row.ring2.state != 0)
+		{
+			DevChangeColor(row.ring2, RING_2, row.id);
+		}
+		if (row.ring3.state != 0)
+		{
+			DevChangeColor(row.ring3, RING_3, row.id);
+		}
+
+		return 1;
+	}
+	else
+	{
+		LOGE(LOGTAG_MSG, "DEVICE ID:%s No action taken", data["id"]);
+		return 0;
+	}
 }
 
 int SmartControllerClass::CldJSONCommand(String jsonData)

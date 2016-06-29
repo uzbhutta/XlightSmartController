@@ -56,16 +56,20 @@ public:
   void ProcessCommands();
   void CollectData(UC tick);
 
-  // Device Control Functions
-  int DevSoftSwitch(BOOL sw, UC dev = 0);
-  int DevChangeColor();					//ToDo: Params
-
   // High speed system timer process
   void FastProcess();
 
+  // Device Control Functions
+  int DevSoftSwitch(UC state, RING ring, UC dev = 0);
+  int DevChangeColor(Hue_t hue, RING ring, UC dev = 0);
+
+  //Parsing wireless communication for device Control
+  int BLEPowerSwitch(String data);
+  int RFPowerSwitch(String data);
+
   // Cloud interface implementation
   int CldSetTimeZone(String tzStr);
-  int CldPowerSwitch(String swStr);
+  int CldPowerSwitch(String jsonData);
   int CldJSONCommand(String jsonData);
 
   // Parsing Functions
